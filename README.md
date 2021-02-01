@@ -1,4 +1,4 @@
-# senetence-similarity
+# sentence-similarity
 
 Особенности реализации:
 
