@@ -1,0 +1,378 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "Sentence Similarity Backend",
+        "description": "The backend for a test assesment.",
+        "version": "0.1.0"
+    },
+    "paths": {
+        "/": {
+            "get": {
+                "summary": "Index",
+                "operationId": "index__get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/text/": {
+            "get": {
+                "summary": "List Texts",
+                "operationId": "list_texts_v1_text__get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TextListResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Post Text",
+                "operationId": "post_text_v1_text__post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/NewText"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NewTextResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/text/{text_id}": {
+            "get": {
+                "summary": "Get Text",
+                "operationId": "get_text_v1_text__text_id__get",
+                "parameters": [{
+                    "required": true,
+                    "schema": {
+                        "title": "Text Id",
+                        "type": "string"
+                    },
+                    "name": "text_id",
+                    "in": "path"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TextResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/text/{text_id}/{sentence_id}/similar": {
+            "get": {
+                "summary": "Find Similar Sentences",
+                "operationId": "find_similar_sentences_v1_text__text_id___sentence_id__similar_get",
+                "parameters": [{
+                    "required": true,
+                    "schema": {
+                        "title": "Text Id",
+                        "type": "string"
+                    },
+                    "name": "text_id",
+                    "in": "path"
+                }, {
+                    "required": true,
+                    "schema": {
+                        "title": "Sentence Id",
+                        "type": "integer"
+                    },
+                    "name": "sentence_id",
+                    "in": "path"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SimilarSentencesResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "HTTPValidationError": {
+                "title": "HTTPValidationError",
+                "type": "object",
+                "properties": {
+                    "detail": {
+                        "title": "Detail",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ValidationError"
+                        }
+                    }
+                }
+            },
+            "NewText": {
+                "title": "NewText",
+                "required": ["text"],
+                "type": "object",
+                "properties": {
+                    "text": {
+                        "title": "Text",
+                        "maxLength": 1000000,
+                        "minLength": 1,
+                        "type": "string"
+                    }
+                }
+            },
+            "NewTextResponse": {
+                "title": "NewTextResponse",
+                "required": ["id"],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "title": "Id",
+                        "type": "string"
+                    }
+                }
+            },
+            "Sentence": {
+                "title": "Sentence",
+                "required": ["sentence_id", "start_pos", "end_pos", "sentence"],
+                "type": "object",
+                "properties": {
+                    "sentence_id": {
+                        "title": "Sentence Id",
+                        "type": "integer"
+                    },
+                    "start_pos": {
+                        "title": "Start Pos",
+                        "type": "integer"
+                    },
+                    "end_pos": {
+                        "title": "End Pos",
+                        "type": "integer"
+                    },
+                    "sentence": {
+                        "title": "Sentence",
+                        "type": "string"
+                    }
+                }
+            },
+            "SimilarSentence": {
+                "title": "SimilarSentence",
+                "required": ["text_id", "sentence_id", "sentence", "similarity"],
+                "type": "object",
+                "properties": {
+                    "text_id": {
+                        "title": "Text Id",
+                        "type": "string"
+                    },
+                    "sentence_id": {
+                        "title": "Sentence Id",
+                        "type": "integer"
+                    },
+                    "sentence": {
+                        "title": "Sentence",
+                        "type": "string"
+                    },
+                    "similarity": {
+                        "title": "Similarity",
+                        "type": "number"
+                    }
+                }
+            },
+            "SimilarSentencesMeta": {
+                "title": "SimilarSentencesMeta",
+                "required": ["took"],
+                "type": "object",
+                "properties": {
+                    "took": {
+                        "title": "Took",
+                        "type": "integer"
+                    }
+                }
+            },
+            "SimilarSentencesResponse": {
+                "title": "SimilarSentencesResponse",
+                "required": ["meta", "sentence", "similar_sentences"],
+                "type": "object",
+                "properties": {
+                    "meta": {
+                        "$ref": "#/components/schemas/SimilarSentencesMeta"
+                    },
+                    "sentence": {
+                        "title": "Sentence",
+                        "type": "string"
+                    },
+                    "similar_sentences": {
+                        "title": "Similar Sentences",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SimilarSentence"
+                        }
+                    }
+                }
+            },
+            "TextListMeta": {
+                "title": "TextListMeta",
+                "required": ["took", "total"],
+                "type": "object",
+                "properties": {
+                    "took": {
+                        "title": "Took",
+                        "type": "integer"
+                    },
+                    "total": {
+                        "title": "Total",
+                        "type": "integer"
+                    }
+                }
+            },
+            "TextListResponse": {
+                "title": "TextListResponse",
+                "required": ["meta", "texts"],
+                "type": "object",
+                "properties": {
+                    "meta": {
+                        "$ref": "#/components/schemas/TextListMeta"
+                    },
+                    "texts": {
+                        "title": "Texts",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TextPreview"
+                        }
+                    }
+                }
+            },
+            "TextPreview": {
+                "title": "TextPreview",
+                "required": ["id", "preview", "created"],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "title": "Id",
+                        "type": "string"
+                    },
+                    "preview": {
+                        "title": "Preview",
+                        "type": "string"
+                    },
+                    "created": {
+                        "title": "Created",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "TextResponse": {
+                "title": "TextResponse",
+                "required": ["id", "created", "sentences"],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "title": "Id",
+                        "type": "string"
+                    },
+                    "created": {
+                        "title": "Created",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "sentences": {
+                        "title": "Sentences",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Sentence"
+                        }
+                    }
+                }
+            },
+            "ValidationError": {
+                "title": "ValidationError",
+                "required": ["loc", "msg", "type"],
+                "type": "object",
+                "properties": {
+                    "loc": {
+                        "title": "Location",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "msg": {
+                        "title": "Message",
+                        "type": "string"
+                    },
+                    "type": {
+                        "title": "Error Type",
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}

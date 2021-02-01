@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+pydantic
+sqlalchemy
+nltk
+databases
+databases[postgresql]
+asyncpg
+psycopg2
+tensorflow==2.1
+tensorflow_hub
+elasticsearch
+gunicorn
+uvloop
+httptools

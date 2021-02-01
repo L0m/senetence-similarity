@@ -1,0 +1,41 @@
+version: '3.0'
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: sesi
+      POSTGRES_PASSWORD: sesi
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+
+  db_vec:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+    environment:
+      - node.name=db_vec
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - 9200:9200
+
+  server:
+    build:
+      context: ./
+      dockerfile: ./src/server/Dockerfile
+    restart: always
+    ports:
+      - ${BIND_IFACE-0.0.0.0}:${SERVER_PORT-8000}:8000
+    depends_on:
+      - db
+      - db_vec
